@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>JS Searcher</title>
+</head>
+<body style="background-color: #ADD8E6;">
+JS Searcher 1.0.8
+<hr>
+Enter target directory path:&nbsp;<input type="text" id="enterTargetDirPath" style="width:250px">
+<input type="button" style="width:150px" value="Open" onclick="openDirectory()">
+<br><br>
+Enter regular expression:&nbsp;<input type="text" id="enterRegex" style="width:250px" value=".+">
+<input type="checkbox" id="caseIns"><label for="caseIns">Case insensitive match</label>
+<br><br>
+Enter report directory path:&nbsp;<input type="text" id="enterReportDirPath" style="width:250px">
+<input type="button" style="width:150px" value="Save" onclick="saveReport()">
+<br><br>
+Enter file path:&nbsp;<input type="text" id="enterFilePath" style="width:250px">
+<input type="button" style="width:150px" value="Open" onclick="openFile()">
+<br><br>
+<input type="checkbox" id="searchFiles" checked><label for="searchFiles">Search files</label>
+<input type="checkbox" id="searchDir"><label for="searchDir">Search directories</label>
+<input type="checkbox" id="scanSub"><label for="scanSub">Scan subdirectories</label>
+<input type="checkbox" id="moreInfo"><label for="moreInfo">Detailed info</label>
+<br><br>
+<input type="button" style="width:150px" value="Reset" onclick="location.reload()">
+<input type="button" style="width:150px" value="Search" onclick="searchElements()">
+<hr>
+<textarea id="results" style="display:none;" cols="170" rows="30" wrap="off" readonly></textarea>
+<script>
+
+var object = new ActiveXObject("Scripting.FileSystemObject");
+
+function openFile()
+{
+ var shellObject = new ActiveXObject("Wscript.Shell");
+ var filePath = formatPath(document.getElementById("enterFilePath").value).slice(0, -1);
+ if(object.FileExists(filePath))
+ {
+  shellObject.run("\"" + filePath + "\"");
+ }
+ else
+ {
+  alert("File not found");
+ }
+}
+
+function formatPath(path)
+{
+ return (path.trim() + "\\").replace(/\\+/g,"\\");
+}
+
+function includes(container, content)
+{
+ if(container !== null)
+ {
+  return container.indexOf(content) !== -1;
+ } 
+ return false;
+}
+
+function getRegex(regex, caseIns)
+{
+ if(caseIns)
+ {
+  return new RegExp(regex, "i");
+ }
+ return new RegExp(regex);
+}
+
+function openDirectory()
+{
+ var dirPath = formatPath(document.getElementById("enterTargetDirPath").value);
+ if(object.FolderExists(dirPath) && dirPath !== "\\")
+ {
+  window.open(dirPath);
+ }
+ else
+ {
+  alert("Directory not found");
+ }
+}
+
+function saveReport()
+{
+ var reportDirPath = formatPath(document.getElementById("enterReportDirPath").value);
+ if(object.FolderExists(reportDirPath) && reportDirPath !== "\\")
+ {
+  var reportFilePath = reportDirPath + "JSSearcherReport.txt";
+  try
+  {
+   var text = document.querySelector("textarea").value;
+   var reportFile = object.CreateTextFile(reportFilePath,true,true);
+   reportFile.Write(text);
+   reportFile.Close();
+   alert("Report file saved");
+  }
+  catch(error)
+  { 
+   alert("Report file not saved");
+  }
+ }
+ else
+ {
+  alert("Report directory not found");
+ }
+}
+
+function searchAndWrite(object, targetDirPath, regExp, searchFiles, searchDir, scanSub, moreInfo, reportObj)
+{
+ targetDirPath = formatPath(targetDirPath);
+ var files = new Enumerator(object.GetFolder(targetDirPath).Files);
+ var directories = new Enumerator(object.GetFolder(targetDirPath).SubFolders);
+ if(searchFiles)
+ {
+  for(;!files.atEnd();files.moveNext())
+  {
+   var fileName = files.item().Name;
+   if(includes(fileName.match(regExp),fileName))
+   {
+    reportObj.nFiles++;
+    if(moreInfo)
+	{
+     reportObj.report += reportObj.nFiles + " | " + files.item().Type + " | " + targetDirPath + " | " + fileName + " | " + files.item().Size + " | " + new Date(files.item().DateLastModified).toLocaleString() + " | " + new Date(files.item().DateCreated).toLocaleString() + " | " + new Date(files.item().DateLastAccessed).toLocaleString() + "\n";
+    }
+	else
+	{
+	 reportObj.report += reportObj.nFiles + " | File | " + targetDirPath + " | " + fileName + " | - | - | - | -\n";
+	}
+   }
+  }
+ }
+ for(;!directories.atEnd();directories.moveNext())
+ {
+  var dirName = directories.item().Name;
+  if(searchDir && includes(dirName.match(regExp),dirName))
+  {
+   reportObj.nDirs++;
+   if(moreInfo)
+   {
+    var size = "";
+    try
+    {
+     size = directories.item().Size;
+    }
+    catch(error)
+    {
+     size = "-";
+    }
+    reportObj.report += reportObj.nDirs + " | " + directories.item().Type + " | " + targetDirPath + " | " + dirName + " | " + size + " | " + new Date(directories.item().DateLastModified).toLocaleString() + " | " + new Date(directories.item().DateCreated).toLocaleString() + " | " + new Date(directories.item().DateLastAccessed).toLocaleString() + "\n";
+   }
+   else
+   {
+    reportObj.report += reportObj.nDirs + " | Directory | " + targetDirPath + " | " + dirName + " | - | - | - | -\n";
+   }
+  }
+  if(scanSub)
+  {
+   searchAndWrite(object, targetDirPath + dirName, regExp, searchFiles, searchDir, scanSub, moreInfo, reportObj);
+  }
+ }
+}
+
+function searchElements()
+{
+ var failRegex = false;
+ var regex = document.getElementById("enterRegex").value;
+ var caseIns = document.getElementById("caseIns").checked;
+ var searchFiles = document.getElementById("searchFiles").checked;
+ var searchDir = document.getElementById("searchDir").checked;
+ var scanSub = document.getElementById("scanSub").checked;
+ var moreInfo = document.getElementById("moreInfo").checked;
+ var regExp = null;
+ try
+ {
+  regExp = getRegex(regex, caseIns);
+ }
+ catch(error)
+ { 
+  failRegex = true;
+ }
+ if(!failRegex)
+ {
+  var targetDirPath = formatPath(document.getElementById("enterTargetDirPath").value);
+  if(object.FolderExists(targetDirPath) && targetDirPath !== "\\")
+  {
+   var textArea = document.getElementById("results");
+   textArea.style.display = "";
+   var reportObj = {nFiles: 0, nDirs: 0, report: ""};
+   var start = new Date();
+   searchAndWrite(object, targetDirPath, regExp, searchFiles, searchDir, scanSub, moreInfo, reportObj);
+   var elapsed = (new Date()-start)/1000;
+   var report = "JS Searcher 1.0.8\n"
+               + "Time elapsed: " + elapsed + " s\n" 
+			   + "Target directory: " + targetDirPath + "\n" 
+			   + "Regular expression: " + regex + "\n"
+			   + "Case insensitive match: " + caseIns + "\n"
+			   + "Search files: " + searchFiles + "\n" 
+			   + "Search directories: " + searchDir + "\n" 
+			   + "Scan subdirectories: " + scanSub + "\n"
+			   + "Detailed info: " + moreInfo + "\n"
+			   + "Found files: " + reportObj.nFiles + "\n"  
+			   + "Found directories: " + reportObj.nDirs + "\n"
+			   + "Total: " + (reportObj.nFiles + reportObj.nDirs);
+   if(reportObj.nFiles !== 0 || reportObj.nDirs !== 0)
+   {
+    report += "\n\n  | Type | Parent directory | Name | Size (byte) | Date last modified | Date created | Date last accessed\n" + reportObj.report.slice(0,-1);
+   }
+   else
+   {
+    report += "\n\nNo results found";
+   }
+   textArea.value = report;
+  }
+  else
+  {
+   alert("Target directory not found");
+  }
+ }
+ else
+ {
+  alert("Invalid regular expression");
+ }
+}
+
+</script>
+</body>
+</html>
