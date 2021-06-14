@@ -5,45 +5,63 @@
 <title>JS Searcher</title>
 </head>
 <body style="background-color: #ADD8E6;">
-JS Searcher 1.1.1
+JS Searcher 1.1.3
 <hr>
-<input type="text" id="targetDirPath" style="width:250px" placeholder="Enter target directory path">
-<input type="button" style="width:150px" value="Open" onclick="openDir()">
+<input type="text" id="targetDirPath" style="width:350px" placeholder="Enter target directory path">
+<input type="button" style="width:150px" value="Open directory" onclick="openDir()">
 <br><br>
-<input type="text" id="regex" style="width:250px" placeholder="Enter regular expression">
+<input type="text" id="regex" style="width:350px" placeholder="Enter regular expression">
 <input type="checkbox" id="caseIns"><label for="caseIns">Case insensitive match</label>
 <br><br>
-<input type="text" id="minSize" style="width:250px" placeholder="Enter minimum size (byte)">
-<input type="text" id="maxSize" style="width:250px" placeholder="Enter maximum size (byte)">
+<input type="text" id="minSize" style="width:350px" placeholder="Enter minimum size (byte)">
 <br><br>
-<input type="text" id="reportDirPath" style="width:250px" placeholder="Enter report directory path">
-<input type="button" style="width:150px" value="Save" onclick="saveRep()">
+<input type="text" id="maxSize" style="width:350px" placeholder="Enter maximum size (byte)">
 <br><br>
-<input type="text" id="filePath" style="width:250px" placeholder="Enter file path">
-<input type="button" style="width:150px" value="Open" onclick="openFile()">
+<input type="text" id="reportDirPath" style="width:350px" placeholder="Enter report directory path">
+<input type="button" style="width:150px" value="Save report" onclick="saveRep()">
+<br><br>
+<input type="text" id="filePath" style="width:350px" placeholder="Enter file path">
+<input type="button" style="width:150px" value="Open file" onclick="openFile()">
 <br><br>
 <input type="checkbox" id="searchFiles"><label for="searchFiles">Search files</label>
 <input type="checkbox" id="searchDir"><label for="searchDir">Search directories</label>
 <input type="checkbox" id="scanSub"><label for="scanSub">Scan subdirectories</label>
-<input type="checkbox" id="moreInfo"><label for="moreInfo">Detailed info</label>
+<input type="checkbox" id="moreInfo"><label for="moreInfo">Detailed info (slower)</label>
 <br><br>
 <input type="button" style="width:150px" value="Search" onclick="searchElem()">
 <input type="button" style="width:150px" value="Reset" onclick="location.reload()">
+<input type="button" style="width:150px" value="Zoom +" onclick="setZoom(this.value)">
+<input type="button" style="width:150px" value="Zoom -" onclick="setZoom(this.value)">
 <input type="button" style="width:150px" value="About" onclick="showAbout()">
 <hr>
 <textarea id="results" style="display:none;" cols="170" rows="30" wrap="off" readonly></textarea>
 <script>
 
 var object = new ActiveXObject("Scripting.FileSystemObject");
+var zoomLevel = 100;
 
 function formatPath(path)
 {
  return (path.trim() + "\\").replace(/\\+/g,"\\");
 }
 
+function setZoom(filter)
+{
+ if(filter === "Zoom +")
+ {
+  zoomLevel += 10;
+  document.body.style.zoom = zoomLevel + "%";
+ }
+ if(filter === "Zoom -")
+ {
+  zoomLevel -= 10;
+  document.body.style.zoom = zoomLevel + "%";
+ }
+}
+
 function showAbout()
 {
- var about = "JS Searcher\nAuthor: Al Armato\nVersion: 1.1.1\n\n" + 
+ var about = "JS Searcher\nAuthor: Al Armato\nVersion: 1.1.3\n\n" +
             "This program is free software: you can redistribute it and/or modify\n" + 
        		"it under the terms of the GNU General Public License as published by\n" + 
        		"the Free Software Foundation, either version 3 of the License, or\n" + 
@@ -149,7 +167,6 @@ function addToReport(name, size, regExp, minSize, maxSize)
 
 function searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj)
 {
- targetDirPath = formatPath(targetDirPath);
  var files = new Enumerator(object.GetFolder(targetDirPath).Files);
  var directories = new Enumerator(object.GetFolder(targetDirPath).SubFolders);
  if(searchFiles)
@@ -175,10 +192,10 @@ function searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchF
  }
  for(;!directories.atEnd();directories.moveNext())
  {
+  var directory = directories.item();
+  var dirName = directory.Name;
   if(searchDir)
   {
-   var directory = directories.item();
-   var dirName = directory.Name;
    var dirSize = 0;
    try
    {
@@ -200,10 +217,10 @@ function searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchF
      reportObj.report += reportObj.nDirs + " | Directory | " + targetDirPath + " | " + dirName + "\n";
     }
    }
-  } 
+  }
   if(scanSub)
   {
-   searchAndWrite(object, targetDirPath + dirName, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
+   searchAndWrite(object, formatPath(targetDirPath + dirName), regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
   }
  }
 }
@@ -229,8 +246,8 @@ function searchElem()
   searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
   var elapsed = (new Date()-start)/1000;
   var report = "JS Searcher\n"
-               + "Version: 1.1.1\n"
-			   + "Current time: " + new Date().toLocaleString() + "\n"
+               + "Version: 1.1.3\n"
+			   + "Local date and time: " + new Date().toLocaleString() + "\n"
                + "Time elapsed: " + elapsed + " s\n" 
 			   + "Target directory: " + targetDirPath + "\n" 
 			   + "Regular expression: " + regex + "\n"
