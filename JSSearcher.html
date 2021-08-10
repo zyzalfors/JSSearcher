@@ -2,283 +2,37 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JS Searcher</title>
+<title>JS Searcher 1.1.5</title>
+<script src="script.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
-<body style="background-color: #ADD8E6;">
-JS Searcher 1.1.3
+<body>
+JS Searcher 1.1.5
 <hr>
-<input type="text" id="targetDirPath" style="width:350px" placeholder="Enter target directory path">
-<input type="button" style="width:150px" value="Open directory" onclick="openDir()">
+<input type="text" id="targetDirPath" placeholder="Enter target directory path">
+<input type="button" value="Open directory" onclick="openDirectory()">
 <br><br>
-<input type="text" id="regex" style="width:350px" placeholder="Enter regular expression">
-<input type="checkbox" id="caseIns"><label for="caseIns">Case insensitive match</label>
+<input type="text" id="regex" placeholder="Enter regular expression">
+<input type="checkbox" id="caseIns" checked><label>Case insensitive</label>
 <br><br>
-<input type="text" id="minSize" style="width:350px" placeholder="Enter minimum size (byte)">
+<input type="number" id="minSize" placeholder="Enter minimum size (byte)">
 <br><br>
-<input type="text" id="maxSize" style="width:350px" placeholder="Enter maximum size (byte)">
+<input type="number" id="maxSize" placeholder="Enter maximum size (byte)">
 <br><br>
-<input type="text" id="reportDirPath" style="width:350px" placeholder="Enter report directory path">
-<input type="button" style="width:150px" value="Save report" onclick="saveRep()">
+<input type="text" id="reportDirPath" placeholder="Enter report directory path">
+<input type="button" value="Save report" onclick="saveReport()">
 <br><br>
 <input type="text" id="filePath" style="width:350px" placeholder="Enter file path">
-<input type="button" style="width:150px" value="Open file" onclick="openFile()">
+<input type="button" value="Open file" onclick="openFile()">
 <br><br>
-<input type="checkbox" id="searchFiles"><label for="searchFiles">Search files</label>
-<input type="checkbox" id="searchDir"><label for="searchDir">Search directories</label>
-<input type="checkbox" id="scanSub"><label for="scanSub">Scan subdirectories</label>
-<input type="checkbox" id="moreInfo"><label for="moreInfo">Detailed info (slower)</label>
+<input type="checkbox" id="searchFiles" checked><label>Search files</label>
+<input type="checkbox" id="searchDir"><label>Search directories</label>
+<input type="checkbox" id="scanSub"><label>Scan subdirectories</label>
+<input type="checkbox" id="moreInfo"><label>Detailed info</label>
 <br><br>
-<input type="button" style="width:150px" value="Search" onclick="searchElem()">
-<input type="button" style="width:150px" value="Reset" onclick="location.reload()">
-<input type="button" style="width:150px" value="Zoom +" onclick="setZoom(this.value)">
-<input type="button" style="width:150px" value="Zoom -" onclick="setZoom(this.value)">
-<input type="button" style="width:150px" value="About" onclick="showAbout()">
+<input type="button" value="Search" onclick="searchElements()">
+<input type="button" value="Reset" onclick="location.reload()">
 <hr>
-<textarea id="results" style="display:none;" cols="170" rows="30" wrap="off" readonly></textarea>
-<script>
-
-var object = new ActiveXObject("Scripting.FileSystemObject");
-var zoomLevel = 100;
-
-function formatPath(path)
-{
- return (path.trim() + "\\").replace(/\\+/g,"\\");
-}
-
-function setZoom(filter)
-{
- if(filter === "Zoom +")
- {
-  zoomLevel += 10;
-  document.body.style.zoom = zoomLevel + "%";
- }
- if(filter === "Zoom -")
- {
-  zoomLevel -= 10;
-  document.body.style.zoom = zoomLevel + "%";
- }
-}
-
-function showAbout()
-{
- var about = "JS Searcher\nAuthor: Al Armato\nVersion: 1.1.3\n\n" +
-            "This program is free software: you can redistribute it and/or modify\n" + 
-       		"it under the terms of the GNU General Public License as published by\n" + 
-       		"the Free Software Foundation, either version 3 of the License, or\n" + 
-       		"(at your option) any later version.\n\n" + 
-       		"This program is distributed in the hope that it will be useful,\n" + 
-       		"but WITHOUT ANY WARRANTY; without even the implied warranty of\n" + 
-       		"MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n" + 
-       		"GNU General Public License for more details.\n\n" + 
-       		"Visit https://www.gnu.org/licenses.";
- alert(about);
-}
-
-function openFile()
-{
- var shellObject = new ActiveXObject("Wscript.Shell");
- var filePath = formatPath(document.getElementById("filePath").value).slice(0, -1);
- if(object.FileExists(filePath))
- {
-  try
-  {
-   shellObject.run("\"" + filePath + "\"");
-  }
-  catch(error)
-  {
-   console.error(error.stack);
-   window.open(filePath);
-  }
- }
- else
- {
-  alert("File not found");
- }
-}
-
-function getRegex(regex, caseIns)
-{
- try
- {
-  return caseIns ? new RegExp(regex, "i") : new RegExp(regex);
- }
- catch(error)
- {
-  console.error(error.stack);
-  alert("Invalid regular expression");
-  return new RegExp(".+");
- }
-}
-
-function openDir()
-{
- var targetDirPath = formatPath(document.getElementById("targetDirPath").value);
- if(object.FolderExists(targetDirPath) && targetDirPath !== "\\")
- {
-  try
-  {
-   window.open(targetDirPath);
-  }
-  catch(error)
-  {
-   console.error(error.stack);
-   alert("Directory cannot be opened");
-  }
- }
- else
- {
-  alert("Directory not found");
- }
-}
-
-function saveRep()
-{
- var reportDirPath = formatPath(document.getElementById("reportDirPath").value);
- if(object.FolderExists(reportDirPath) && reportDirPath !== "\\")
- {
-  var reportFilePath = reportDirPath + "JSSearcherReport.txt";
-  try
-  {
-   var text = document.querySelector("textarea").value;
-   var reportFile = object.CreateTextFile(reportFilePath,true,true);
-   reportFile.Write(text);
-   reportFile.Close();
-   alert("Report file saved");
-  }
-  catch(error)
-  {
-   console.error(error.stack);
-   alert("Report file cannot be saved");
-  }
- }
- else
- {
-  alert("Report directory not found");
- }
-}
-
-function addToReport(name, size, regExp, minSize, maxSize)
-{
- var matches = name.match(regExp);
- minSize = isNaN(minSize) ? size : minSize;
- maxSize = isNaN(maxSize) ? size : maxSize;
- return ((matches !== null) ? (matches.indexOf(name) !== -1) : false) && (size >= minSize) && (size <= maxSize);
-}
-
-function searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj)
-{
- var files = new Enumerator(object.GetFolder(targetDirPath).Files);
- var directories = new Enumerator(object.GetFolder(targetDirPath).SubFolders);
- if(searchFiles)
- {
-  for(;!files.atEnd();files.moveNext())
-  {
-   var file = files.item();
-   var fileName = file.Name;
-   var fileSize = parseFloat(file.Size);
-   if(addToReport(fileName, fileSize, regExp, minSize, maxSize))
-   {
-    reportObj.nFiles++;
-    if(moreInfo)
-	{
-     reportObj.report += reportObj.nFiles + " | " + file.Type + " | " + targetDirPath + " | " + fileName + " | " + fileSize + " | " + new Date(file.DateLastModified).toLocaleString() + " | " + new Date(file.DateCreated).toLocaleString() + " | " + new Date(file.DateLastAccessed).toLocaleString() + "\n";
-    }
-	else
-	{
-	 reportObj.report += reportObj.nFiles + " | File | " + targetDirPath + " | " + fileName + "\n";
-	}
-   }
-  }
- }
- for(;!directories.atEnd();directories.moveNext())
- {
-  var directory = directories.item();
-  var dirName = directory.Name;
-  if(searchDir)
-  {
-   var dirSize = 0;
-   try
-   {
-    dirSize = parseFloat(directory.Size);
-   }
-   catch(error)
-   {
-	console.error(error.stack);
-   }
-   if(addToReport(dirName, dirSize, regExp, minSize, maxSize))
-   {
-    reportObj.nDirs++;
-    if(moreInfo)
-    {
-     reportObj.report += reportObj.nDirs + " | " + directory.Type + " | " + targetDirPath + " | " + dirName + " | " + dirSize + " | " + new Date(directory.DateLastModified).toLocaleString() + " | " + new Date(directory.DateCreated).toLocaleString() + " | " + new Date(directory.DateLastAccessed).toLocaleString() + "\n";
-    }
-    else
-    {
-     reportObj.report += reportObj.nDirs + " | Directory | " + targetDirPath + " | " + dirName + "\n";
-    }
-   }
-  }
-  if(scanSub)
-  {
-   searchAndWrite(object, formatPath(targetDirPath + dirName), regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
-  }
- }
-}
-
-function searchElem()
-{
- var regex = document.getElementById("regex").value;
- var minSize = parseFloat(document.getElementById("minSize").value);
- var maxSize = parseFloat(document.getElementById("maxSize").value);
- var caseIns = document.getElementById("caseIns").checked;
- var searchFiles = document.getElementById("searchFiles").checked;
- var searchDir = document.getElementById("searchDir").checked;
- var scanSub = document.getElementById("scanSub").checked;
- var moreInfo = document.getElementById("moreInfo").checked;
- var regExp = getRegex(regex, caseIns);
- var targetDirPath = formatPath(document.getElementById("targetDirPath").value);
- if(object.FolderExists(targetDirPath) && targetDirPath !== "\\")
- {
-  var textArea = document.getElementById("results");
-  textArea.style.display = "";
-  var reportObj = {nFiles: 0, nDirs: 0, report: ""};
-  var start = new Date();
-  searchAndWrite(object, targetDirPath, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
-  var elapsed = (new Date()-start)/1000;
-  var report = "JS Searcher\n"
-               + "Version: 1.1.3\n"
-			   + "Local date and time: " + new Date().toLocaleString() + "\n"
-               + "Time elapsed: " + elapsed + " s\n" 
-			   + "Target directory: " + targetDirPath + "\n" 
-			   + "Regular expression: " + regex + "\n"
-			   + "Minimum size: " + (isNaN(minSize) ? "undefined" : minSize + " byte") + "\n"
-			   + "Maximum size: " + (isNaN(maxSize) ? "undefined" : maxSize + " byte") + "\n"
-			   + "Case insensitive match: " + caseIns + "\n"
-			   + "Search files: " + searchFiles + "\n" 
-			   + "Search directories: " + searchDir + "\n" 
-			   + "Scan subdirectories: " + scanSub + "\n"
-			   + "Detailed info: " + moreInfo + "\n"
-			   + "Found files: " + reportObj.nFiles + "\n"  
-			   + "Found directories: " + reportObj.nDirs + "\n"
-			   + "Total: " + (reportObj.nFiles + reportObj.nDirs);
-  if(reportObj.nFiles !== 0 || reportObj.nDirs !== 0)
-  {
-   report += "\n\n  | Type | Parent directory | Name";
-   report += moreInfo ? " | Size (byte) | Date last modified | Date created | Date last accessed\n" : "\n";
-   report += reportObj.report.slice(0,-1);
-  }
-  else
-  {
-   report += "\n\nNo results found";
-  }
-  textArea.value = report;
- }
- else
- {
-  alert("Target directory not found");
- }
-}
-
-</script>
+<textarea id="results" cols="170" rows="30" wrap="off" readonly></textarea>
 </body>
 </html>

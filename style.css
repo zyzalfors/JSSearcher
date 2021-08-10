@@ -1,0 +1,19 @@
+body, input[type=button] {   
+     background-color: lightgrey; 
+}
+
+* {
+   font-family: courier;
+}
+
+input[type=button] {
+	width: 150px;	
+}
+
+input[type=number], input[type=text]  {
+	width: 350px;
+}
+
+textarea {
+	display: none;
+}
