@@ -2,37 +2,36 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JS Searcher 1.1.5</title>
-<script src="script.js"></script>
+<title>JS Searcher 1.1.6</title>
 <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-JS Searcher 1.1.5
+JS Searcher 1.1.6
 <hr>
 <input type="text" id="targetDirPath" placeholder="Enter target directory path">
-<input type="button" value="Open directory" onclick="openDirectory()">
-<br><br>
-<input type="text" id="regex" placeholder="Enter regular expression">
-<input type="checkbox" id="caseIns" checked><label>Case insensitive</label>
-<br><br>
-<input type="number" id="minSize" placeholder="Enter minimum size (byte)">
-<br><br>
-<input type="number" id="maxSize" placeholder="Enter maximum size (byte)">
-<br><br>
-<input type="text" id="reportDirPath" placeholder="Enter report directory path">
-<input type="button" value="Save report" onclick="saveReport()">
-<br><br>
-<input type="text" id="filePath" style="width:350px" placeholder="Enter file path">
-<input type="button" value="Open file" onclick="openFile()">
-<br><br>
-<input type="checkbox" id="searchFiles" checked><label>Search files</label>
-<input type="checkbox" id="searchDir"><label>Search directories</label>
-<input type="checkbox" id="scanSub"><label>Scan subdirectories</label>
-<input type="checkbox" id="moreInfo"><label>Detailed info</label>
-<br><br>
-<input type="button" value="Search" onclick="searchElements()">
-<input type="button" value="Reset" onclick="location.reload()">
+<input type="checkbox" id="enableAdvanced" onchange="enableAdvancedOptions()"><label>Advanced options</label>
 <hr>
-<textarea id="results" cols="170" rows="30" wrap="off" readonly></textarea>
+<input type="text" id="regex" placeholder="Enter regular expression" disabled>
+<input type="checkbox" id="caseIns" checked disabled><label>Case insensitive</label>
+<br><br>
+<input type="number" id="minSize" placeholder="Enter minimum size (byte)" disabled>
+<br><br>
+<input type="number" id="maxSize" placeholder="Enter maximum size (byte)" disabled>
+<br><br>
+<input type="checkbox" id="searchFiles" checked disabled><label>Search files</label>
+<input type="checkbox" id="searchDir" disabled><label>Search directories</label>
+<input type="checkbox" id="scanSub" disabled><label>Scan subdirectories</label>
+<input type="checkbox" id="moreInfo" disabled><label>Detailed info</label>
+<br><br>
+<input type="button" id="search" value="Search" onclick="searchElements()" disabled>
+<hr>
+<input type="text" id="reportDirPath" placeholder="Enter report directory path" disabled>
+<input type="button" id="save" value="Save report" onclick="saveReport()" disabled>
+<br><br>
+<input type="text" id="filePath" placeholder="Enter file path" disabled>
+<input type="button" id="open" value="Open file" onclick="openFile()" disabled>
+<hr>
+<textarea cols="170" rows="25" wrap="off" readonly></textarea>
 </body>
+<script src="script.js"></script>
 </html>
