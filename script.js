@@ -95,7 +95,7 @@ function saveReport() {
  if(FSObj.FolderExists(reportDirPath) && reportDirPath !== "\\") {
   let reportFilePath = reportDirPath + "JSSearcherReport.txt";
   try {
-   let text = document.querySelector("textarea").value;
+   let text = textArea.value;
    let reportFile = FSObj.CreateTextFile(reportFilePath, true, true);
    reportFile.Write(text);
    reportFile.Close();
