@@ -12,7 +12,6 @@ input[type=button] {
 }
 
 input[type=number], input[type=text]  {
-	background-color: white;
 	width: 350px;
 }
 
