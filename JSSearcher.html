@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>JS Searcher 1.1.6</title>
+<script src="script.js"></script>
 <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
 JS Searcher 1.1.6
 <hr>
-<input type="text" id="targetDirPath" placeholder="Enter target directory path">
+<input type="text" id="targetDirPath" placeholder="Enter target directory path" onblur="quickBrowse()">
 <input type="checkbox" id="enableAdvanced" onchange="enableAdvancedOptions()"><label>Advanced options</label>
 <hr>
 <input type="text" id="regex" placeholder="Enter regular expression" disabled>
@@ -33,5 +34,4 @@ JS Searcher 1.1.6
 <hr>
 <textarea cols="170" rows="25" wrap="off" readonly></textarea>
 </body>
-<script src="script.js"></script>
 </html>
