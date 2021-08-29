@@ -5,8 +5,6 @@ function formatPath(path) {
   return (path.trim() + "\\").replace(/\\+/g,"\\");
 }
 
-document.getElementById("targetDirPath").addEventListener("blur", quickBrowse);
-
 function enableAdvancedOptions() {
  let checked = document.getElementById("enableAdvanced").checked;
  if(checked) {
