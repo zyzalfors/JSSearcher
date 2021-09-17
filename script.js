@@ -6,8 +6,7 @@ function formatPath(path) {
 }
 
 function enableAdvancedOptions() {
- let checked = document.getElementById("enableAdvanced").checked;
- if(checked) {
+ if(document.getElementById("enableAdvanced").checked) {
 	 document.getElementById("regex").disabled = false;
 	 document.getElementById("caseIns").disabled = false;
 	 document.getElementById("minSize").disabled = false;
@@ -17,7 +16,7 @@ function enableAdvancedOptions() {
 	 document.getElementById("scanSub").disabled = false;
 	 document.getElementById("moreInfo").disabled = false;
 	 document.getElementById("search").disabled = false;
-	 document.getElementById("targetDirPath").removeEventListener("blur", quickBrowse);
+	 document.getElementById("quick").disabled = true;
  }
  else {
 	 document.getElementById("regex").disabled = true;
@@ -29,7 +28,7 @@ function enableAdvancedOptions() {
 	 document.getElementById("scanSub").disabled = true;
 	 document.getElementById("moreInfo").disabled = true;
 	 document.getElementById("search").disabled = true;
-     document.getElementById("targetDirPath").addEventListener("blur", quickBrowse);	 
+	 document.getElementById("quick").disabled = false;
  }
 }
 
@@ -59,6 +58,9 @@ function quickBrowse() {
    document.getElementById("save").disabled = false;
    document.getElementById("filePath").disabled = false;
    document.getElementById("open").disabled = false;
+  }
+  else {
+   alert("Target directory not found"); 
   }
  } 
  
@@ -178,7 +180,7 @@ function searchElements() {
   searchAndWrite(targetDirPath, regExp, minSize, maxSize, searchFiles, searchDir, scanSub, moreInfo, reportObj);
   let elapsed = (new Date() - start)/1000;
   let report = "JS Searcher\n"
-               + "Version: 1.1.6\n"
+               + "Version: 1.1.7\n"
 			   + "Local date and time: " + new Date().toLocaleString() + "\n"
                + "Time elapsed: " + elapsed + " s\n" 
 			   + "Target directory: " + targetDirPath + "\n" 
