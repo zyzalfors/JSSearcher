@@ -195,7 +195,7 @@ function searchElements() {
 	       + "Found files: " + reportObj.nFiles + "\n"  
 	       + "Found directories: " + reportObj.nDirs + "\n"
 	       + "Total: " + (reportObj.nFiles + reportObj.nDirs) + "\n"
-	       + "Scanned items: "+ reportObj.scanned;
+	       + "Scanned items: " + reportObj.scanned;
   if(reportObj.nFiles !== 0 || reportObj.nDirs !== 0) {
    report += "\n\n  | Type | Parent directory | Name";
    report += moreInfo ? " | Size (byte) | Date last modified | Date created | Date last accessed\n" : "\n";
