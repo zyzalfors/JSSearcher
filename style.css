@@ -1,20 +1,29 @@
-body {   
-     background-color: lightgrey;
+body
+{
+ background-color: #3c3c3c;
+ color: white;
+ scrollbar-face-color: #3c3c3c;
+ scrollbar-arrow-color: white;
+ scrollbar-track-color: #3c3c3c;
 }
 
-* {
-    font-family: courier;
+textarea:-ms-input-placeholder, input[type=number]:-ms-input-placeholder, input[type=text]:-ms-input-placeholder
+{
+ color: lightgrey;
 }
 
-input[type=button] {
-	background-color: white;
-	width: 150px;
+textarea
+{
+ background-color: #3c3c3c;
+ color: white;
+ outline: none;
+ resize: none;
 }
 
-input[type=number], input[type=text]  {
-	width: 350px;
-}
-
-textarea {
-	display: none;
+input[type=text], input[type=button], input[type=number]
+{
+ background-color: #3c3c3c;
+ color: white;
+ width: 200px;
+ border: 1px solid lightgrey;
 }

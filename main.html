@@ -2,18 +2,18 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>JS Searcher</title>
+<title>JS Searcher v1.1.8</title>
 <link rel="stylesheet" type="text/css" href="style.css"/>
 </head>
 <body>
-JS Searcher
-<hr>
+JS Searcher v1.1.8
+<br><br>
 <input type="text" id="targetDirPath" placeholder="Enter target directory path">
 <input type="button" id="quick" value="Quick browse" onclick="quickBrowse()">
 <input type="checkbox" id="enableAdvanced" onchange="enableAdvancedOptions()"><label>Advanced options</label>
-<hr>
+<br><br>
 <input type="text" id="regex" placeholder="Enter regular expression" disabled>
-<input type="checkbox" id="caseIns" checked disabled><label>Case insensitive</label>
+<input type="checkbox" id="caseIns" checked disabled><label>Case-insensitive</label>
 <br><br>
 <input type="number" id="minSize" placeholder="Enter minimum size (byte)" disabled>
 <br><br>
@@ -25,13 +25,13 @@ JS Searcher
 <input type="checkbox" id="moreInfo" disabled><label>Detailed info</label>
 <br><br>
 <input type="button" id="search" value="Search" onclick="searchElements()" disabled>
-<hr>
+<br><br>
 <input type="text" id="reportDirPath" placeholder="Enter report directory path" disabled>
 <input type="button" id="save" value="Save report" onclick="saveReport()" disabled>
 <br><br>
 <input type="text" id="filePath" placeholder="Enter file path" disabled>
 <input type="button" id="open" value="Open file" onclick="openFile()" disabled>
-<hr>
+<br><br>
 <textarea cols="170" rows="25" wrap="off" readonly></textarea>
 </body>
 <script src="script.js"></script>
